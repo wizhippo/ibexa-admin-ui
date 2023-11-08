@@ -46,7 +46,7 @@ class MyMediaTab extends AbstractMediaTab implements OrderedTabInterface
         $pager->setCurrentPage($page);
 
         return $this->twig->render('@ibexadesign/ui/dashboard/tab/my_media.html.twig', [
-            'data' => $this->pagerLocationToDataMapper->map($pager),
+            'data' => $this->pagerLocationToDataMapper->map($pager, true),
         ]);
     }
 }

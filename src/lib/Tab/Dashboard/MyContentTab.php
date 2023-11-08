@@ -46,7 +46,7 @@ class MyContentTab extends AbstractContentTab implements OrderedTabInterface
         $pager->setCurrentPage($page);
 
         return $this->twig->render('@ibexadesign/ui/dashboard/tab/my_content.html.twig', [
-            'data' => $this->pagerLocationToDataMapper->map($pager),
+            'data' => $this->pagerLocationToDataMapper->map($pager, true),
         ]);
     }
 }
