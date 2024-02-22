@@ -2,19 +2,21 @@
     display: flex;
     background: $ibexa-color-white;
     padding: calculateRem(8px) 0;
+    margin: calculateRem(8px) 0;
     min-height: calculateRem(60px);
 
     &--errored {
         background: $ibexa-color-danger-100;
-        color: $ibexa-color-danger;
+        color: $ibexa-color-danger-600;
         border-radius: $ibexa-border-radius;
+        padding-right: calculateRem(32px);
 
         .ibexa-icon {
-            fill: $ibexa-color-danger;
+            fill: $ibexa-color-danger-600;
         }
 
         .c-upload-list-item__size {
-            color: $ibexa-color-danger;
+            color: $ibexa-color-danger-600;
         }
     }
 
@@ -26,7 +28,7 @@
     }
 
     &__meta {
-        padding: 0 calculateRem(16px);
+        padding: 0 calculateRem(8px);
         line-height: 1.4;
         max-width: 25vw;
         display: flex;
@@ -44,8 +46,8 @@
     }
 
     &__size {
-        color: $ibexa-color-dark-300;
-        font-size: $ibexa-text-font-size-medium;
+        color: $ibexa-color-dark-400;
+        font-size: $ibexa-text-font-size-small;
     }
 
     &__info {
@@ -56,8 +58,7 @@
     }
 
     &__message {
-        font-style: italic;
-        font-size: $ibexa-text-font-size-small;
+        font-size: $ibexa-text-font-size-medium;
 
         .ibexa-icon {
             margin-right: calculateRem(4px);
@@ -69,6 +70,10 @@
             .ibexa-icon {
                 fill: $ibexa-color-success;
             }
+        }
+
+        &--error {
+            font-size: $ibexa-text-font-size-small;
         }
     }
 

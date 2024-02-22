@@ -48,6 +48,9 @@ const TooltipPopupComponent = (props) => {
                 >
                     <Icon name="discard" extraClasses="ibexa-icon--small-medium" />
                 </div>
+                { props.subtitle && 
+                    <div className="c-tooltip-popup__subtitle">{props.subtitle}</div>
+                }
             </div>
             <div className="c-tooltip-popup__content" ref={contentRef} style={contentStyle}>
                 {props.children}
@@ -65,6 +68,7 @@ const TooltipPopupComponent = (props) => {
 
 TooltipPopupComponent.propTypes = {
     title: PropTypes.string.isRequired,
+    subtitle: PropTypes.string,
     children: PropTypes.node.isRequired,
     visible: PropTypes.bool.isRequired,
     onClose: PropTypes.func,
@@ -72,6 +76,7 @@ TooltipPopupComponent.propTypes = {
 };
 
 TooltipPopupComponent.defaultProps = {
+    subtitle: '',
     onClose: () => {},
     showFooter: true,
 };

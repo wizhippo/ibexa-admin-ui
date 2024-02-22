@@ -71,6 +71,11 @@
         <target state="new">Upload</target>
         <note>key: multi_file_upload_open_btn.label</note>
       </trans-unit>
+      <trans-unit id="b42fb45b9d30885c4a85318ddb844b10759ff118" resname="multi_file_upload_popup.subtitle">
+        <source>Under %name%</source>
+        <target state="new">Under %name%</target>
+        <note>key: multi_file_upload_popup.subtitle</note>
+      </trans-unit>
       <trans-unit id="b23e0c9a0c723cb5fc100bbf270a045cb6c895da" resname="upload.progress_bar.uploading">
         <source>Uploading...</source>
         <target state="new">Uploading...</target>

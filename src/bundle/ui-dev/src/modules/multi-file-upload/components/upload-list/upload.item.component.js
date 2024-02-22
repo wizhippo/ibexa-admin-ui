@@ -380,7 +380,7 @@ export default class UploadItemComponent extends Component {
 
         const contentTypeIconUrl = getContentTypeIconUrl(contentTypeIdentifier);
 
-        return <Icon customPath={contentTypeIconUrl} extraClasses="ibexa-icon--small-medium" />;
+        return <Icon customPath={contentTypeIconUrl} extraClasses="ibexa-icon--small"/>;
     }
 
     /**
@@ -447,7 +447,7 @@ export default class UploadItemComponent extends Component {
 
         return isError ? (
             <div className="c-upload-list-item__message c-upload-list-item__message--error">
-                <Icon name="warning" extraClasses="ibexa-icon--tiny" />
+                <Icon name="warning" extraClasses="ibexa-icon--tiny-small" />
                 {msg}
             </div>
         ) : null;
@@ -468,7 +468,7 @@ export default class UploadItemComponent extends Component {
 
         return isSuccess ? (
             <div className="c-upload-list-item__message c-upload-list-item__message--success">
-                <Icon name="checkmark" extraClasses="ibexa-icon--tiny" />
+                <Icon name="checkmark" extraClasses="ibexa-icon--tiny-small" />
                 {message}
             </div>
         ) : null;
@@ -499,7 +499,7 @@ export default class UploadItemComponent extends Component {
                 title={label}
                 tabIndex="-1"
             >
-                <Icon name="trash" extraClasses="ibexa-icon--small-medium" />
+                <Icon name="trash" extraClasses="ibexa-icon--small" />
             </div>
         );
     }
@@ -553,7 +553,7 @@ export default class UploadItemComponent extends Component {
                 onClick={this.handleEditBtnClick}
                 tabIndex="-1"
             >
-                <Icon name="edit" extraClasses="ibexa-icon--small-medium" />
+                <Icon name="edit" extraClasses="ibexa-icon--small" />
             </div>
         );
     }
@@ -583,7 +583,7 @@ export default class UploadItemComponent extends Component {
                 title={label}
                 tabIndex="-1"
             >
-                <Icon name="trash" extraClasses="ibexa-icon--small-medium" />
+                <Icon name="trash" extraClasses="ibexa-icon--small" />
             </div>
         );
     }
@@ -606,7 +606,7 @@ export default class UploadItemComponent extends Component {
                 <div className="c-upload-list-item__icon-wrapper">{!isError && this.renderIcon()}</div>
                 <div className="c-upload-list-item__meta">
                     <div className="c-upload-list-item__name">{this.props.data.file.name}</div>
-                    <div className="c-upload-list-item__size">{!isError && uploaded ? totalSize : ''}</div>
+                    <div className="c-upload-list-item__size">{totalSize}</div>
                 </div>
                 <div className="c-upload-list-item__info">
                     {this.renderErrorMessage()}

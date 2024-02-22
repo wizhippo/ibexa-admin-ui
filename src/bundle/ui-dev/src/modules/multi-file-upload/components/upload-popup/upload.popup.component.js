@@ -39,6 +39,7 @@ export default class UploadPopupModule extends Component {
         return (
             <div className="c-upload-popup" ref={this.refTooltip}>
                 <TooltipPopup title={title} showFooter={false} {...tooltipAttrs}>
+                    <div className="c-upload-popup__label">Lorem ipsum</div>
                     <DropAreaComponent
                         addItemsToUpload={this.props.addItemsToUpload}
                         maxFileSize={this.props.adminUiConfig.multiFileUpload.maxFileSize}

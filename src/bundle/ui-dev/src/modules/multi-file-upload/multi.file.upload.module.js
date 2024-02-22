@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { createPortal } from 'react-dom';
 import PropTypes from 'prop-types';
 
-import { getTranslator, getRestInfo } from '@ibexa-admin-ui/src/bundle/Resources/public/js/scripts/helpers/context.helper';
+import { getTranslator } from '@ibexa-admin-ui/src/bundle/Resources/public/js/scripts/helpers/context.helper';
 
 import UploadPopupComponent from './components/upload-popup/upload.popup.component';
 import { createFileStruct, publishFile, deleteFile, checkCanUpload } from './services/multi.file.upload.service';
@@ -271,9 +271,17 @@ export default class MultiFileUploadModule extends Component {
         if (!this.state.popupVisible) {
             return null;
         }
+        
+        const Translator = getTranslator();
+        const subtitle = Translator.trans(
+            /*@Desc("Under %name%")*/ 'multi_file_upload_popup.subtitle', 
+            {name: this.props.parentInfo.name},
+            'ibexa_multi_file_upload'
+        );
 
         const attrs = {
             ...this.props,
+            subtitle: this.props.parentInfo.name ? subtitle : '',
             visible: true,
             onClose: this.hidePopup,
             itemsToUpload: this.state.itemsToUpload,
@@ -315,6 +323,7 @@ MultiFileUploadModule.propTypes = {
         contentTypeId: PropTypes.number.isRequired,
         locationPath: PropTypes.string.isRequired,
         language: PropTypes.string.isRequired,
+        name: PropTypes.string,
     }).isRequired,
     checkCanUpload: PropTypes.func,
     createFileStruct: PropTypes.func,
@@ -330,6 +339,9 @@ MultiFileUploadModule.propTypes = {
 };
 
 MultiFileUploadModule.defaultProps = {
+    parentInfo: PropTypes.shape({
+        name: ''
+    }),
     checkCanUpload,
     createFileStruct,
     deleteFile,
