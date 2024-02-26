@@ -9,25 +9,35 @@
     color: $ibexa-color-dark;
 
     &__label {
-        margin-top: calculateRem(16px);
+        margin-bottom: calculateRem(8px);
         color: $ibexa-color-dark-400;
         font-size: $ibexa-text-font-size-small;
+        line-height: calculateRem(18px);
     }
 
     .c-tooltip-popup {
         width: 100%;
-        max-width: calculateRem(774px);
+        max-width: calculateRem(800px);
         position: absolute;
         z-index: 2;
         left: 50%;
         top: 50%;
         transform: translate(-50%, -50%);
-        padding: calculateRem(16px) calculateRem(32px) calculateRem(32px); 
+        padding: calculateRem(32px); 
 
         &__header {
             @include modal-header();
 
-            padding: $modal-header-padding-y $modal-header-padding-x;
+            padding: 0;
+            margin-bottom: calculateRem(36px);
+        }
+
+        &__title {
+            line-height: calculateRem(42px);
+        }
+
+        &__close {
+            top: 0;
         }
 
         &__subtitle {

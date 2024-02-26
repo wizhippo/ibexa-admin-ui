@@ -1,3 +1,5 @@
+import { getRootNodeSelector } from "./context.helper";
+
 const { document: doc } = window;
 
 const NOTIFICATION_INFO_LABEL = 'info';
@@ -16,9 +18,14 @@ const NOTIFICATION_ERROR_LABEL = 'error';
  * @param {Object} detail.rawPlaceholdersMap
  */
 const showNotification = (detail) => {
+    const configRootNodeSelector = getRootNodeSelector();
+    const eventDispatchNode = configRootNodeSelector 
+        ? doc.querySelector(configRootNodeSelector)
+        : doc.body
+
     const event = new CustomEvent('ibexa-notify', { detail });
 
-    doc.body.dispatchEvent(event);
+    eventDispatchNode.dispatchEvent(event);
 };
 
 /**

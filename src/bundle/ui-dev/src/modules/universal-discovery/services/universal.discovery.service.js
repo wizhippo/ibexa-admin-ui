@@ -54,6 +54,7 @@ export const findLocationsByParentLocationId = (
     },
     callback,
 ) => {
+    console.log('UDW findLocationsByParentLocationId');
     let url = `${instanceUrl}${ENDPOINT_LOCATION}/${parentLocationId}`;
     if (gridView) {
         url += '/gridview';

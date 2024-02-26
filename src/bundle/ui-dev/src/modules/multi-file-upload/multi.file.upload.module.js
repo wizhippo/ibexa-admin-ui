@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { createPortal } from 'react-dom';
 import PropTypes from 'prop-types';
 
-import { getTranslator } from '@ibexa-admin-ui/src/bundle/Resources/public/js/scripts/helpers/context.helper';
+import { getTranslator, getRootNodeSelector } from '@ibexa-admin-ui/src/bundle/Resources/public/js/scripts/helpers/context.helper';
 
 import UploadPopupComponent from './components/upload-popup/upload.popup.component';
 import { createFileStruct, publishFile, deleteFile, checkCanUpload } from './services/multi.file.upload.service';
@@ -21,6 +21,7 @@ export default class MultiFileUploadModule extends Component {
 
         let popupVisible = true;
 
+        this.configRootNodeSelector = getRootNodeSelector();
         this._itemsUploaded = [];
 
         if (!props.itemsToUpload || !props.itemsToUpload.length) {
@@ -291,10 +292,14 @@ export default class MultiFileUploadModule extends Component {
             addItemsToUpload: this.addItemsToUpload,
             removeItemsToUpload: this.removeItemsToUpload,
         };
-        const portalTarget = document.querySelector('.ibexa-assets-library-widget-container');
+        const portalTarget = this.configRootNodeSelector
+            ? document.querySelector(this.configRootNodeSelector)
+            : document.body;
 
-        return createPortal(<UploadPopupComponent {...attrs} />, portalTarget ?? document.body);
+        return createPortal(<UploadPopupComponent {...attrs} />, portalTarget);
     }
+
+    rootNodeSelector;
 
     render() {
         return (

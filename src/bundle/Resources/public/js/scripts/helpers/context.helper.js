@@ -1,5 +1,6 @@
 let { bootstrap, flatpickr, moment, Popper, Routing, Translator } = window;
 let adminUiConfig = window.ibexa?.adminUiConfig;
+let rootNodeSelector = null;
 const restInfo = {
     accessToken: null,
     instanceUrl: window.location.origin,
@@ -44,6 +45,12 @@ export const setTranslator = (TranslatorInstance, forceSet = false) => {
         Translator = TranslatorInstance;
     }
 };
+export const setRootNodeSelector = (rootNodeSelectorParam, forceSet = false) => {
+    if (!rootNodeSelector || forceSet) {
+        rootNodeSelector = rootNodeSelectorParam;
+    }
+};
+
 
 export const getAdminUiConfig = () => adminUiConfig;
 export const getBootstrap = () => bootstrap;
@@ -53,3 +60,4 @@ export const getPopper = () => Popper;
 export const getRouting = () => Routing;
 export const getTranslator = () => Translator;
 export const getRestInfo = () => restInfo;
+export const getRootNodeSelector = () => rootNodeSelector;

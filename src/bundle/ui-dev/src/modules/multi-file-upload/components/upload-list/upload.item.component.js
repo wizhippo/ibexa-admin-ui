@@ -27,6 +27,7 @@ export default class UploadItemComponent extends Component {
         this.abortUploading = this.abortUploading.bind(this);
         this.initPublishFile = this.initPublishFile.bind(this);
         this.deleteFile = this.deleteFile.bind(this);
+        this.handleContentError = this.handleContentError.bind(this);
         this.contentInfoInput = null;
         this.contentVersionInfoInput = null;
         this.contentVersionNoInput = null;
@@ -46,6 +47,9 @@ export default class UploadItemComponent extends Component {
             struct: props.data.struct || null,
             totalSize: fileSizeToString(props.data.file.size),
             uploadedSize: '0',
+            isError: false,
+            errorMsgs: [],
+            isMultipleErrosExpanded: false,
         };
     }
 
@@ -92,11 +96,13 @@ export default class UploadItemComponent extends Component {
             return;
         }
 
-        createFileStruct(data.file, {
+        const createFileStructParams = {
             parentInfo,
             config: adminUiConfig,
             languageCode: currentLanguage,
-        }).then(this.initPublishFile);
+        };
+
+        createFileStruct(data.file, createFileStructParams, this.handleContentError).then(this.initPublishFile);
     }
 
     /**
@@ -121,17 +127,30 @@ export default class UploadItemComponent extends Component {
                 onerror: this.handleUploadError,
             },
             this.handleUploadEnd,
+            this.handleContentError,
         );
     }
 
-    /**
-     * Handles the case when a file cannot be upload because of file type
-     *
-     * @method handleFileTypeNotAllowed
-     * @memberof UploadItemComponent
-     */
-    handleFileTypeNotAllowed() {
-        this.setState(() => ({
+    handleContentError = (errorMsg, callback) => {
+        this.setState((prevState) => ({
+            isError: true,
+            errorMsgs: [...prevState.errorMsgs, errorMsg],
+        }));
+    };
+
+    // ========================================================================================================
+    // TO DO: maybe put this funcstions to one, diff is
+    // - disallowedType: true,
+    // - disallowedSize: false,
+    // - disallowedContentType: false
+    // commone params
+    // - uploading: false
+    // - disallowed: true
+    // - uploaded: false
+    // - aborted: false
+    // - failed: true
+    handleFileTypeNotAllowed(errorMsg = '') {
+        this.setState((prevState) => ({
             uploading: false,
             disallowed: true,
             disallowedType: true,
@@ -140,17 +159,12 @@ export default class UploadItemComponent extends Component {
             uploaded: false,
             aborted: false,
             failed: true,
+            isError: true,
+            errorMsgs: [...prevState.errorMsgs, errorMsg],
         }));
     }
-
-    /**
-     * Handles the case when a file cannot be upload because of file size
-     *
-     * @method handleFileSizeNotAllowed
-     * @memberof UploadItemComponent
-     */
-    handleFileSizeNotAllowed() {
-        this.setState(() => ({
+    handleFileSizeNotAllowed(errorMsg = '') {
+        this.setState((prevState) => ({
             uploading: false,
             disallowed: true,
             disallowedType: false,
@@ -159,11 +173,12 @@ export default class UploadItemComponent extends Component {
             uploaded: false,
             aborted: false,
             failed: true,
+            isError: true,
+            errorMsgs: [...prevState.errorMsgs, errorMsg],
         }));
     }
-
-    handleContentTypeNotAllowed() {
-        this.setState(() => ({
+    handleContentTypeNotAllowed(errorMsg = '') {
+        this.setState((prevState) => ({
             uploading: false,
             disallowed: true,
             disallowedType: false,
@@ -172,16 +187,12 @@ export default class UploadItemComponent extends Component {
             uploaded: false,
             aborted: false,
             failed: true,
+            isError: true,
+            errorMsgs: [...prevState.errorMsgs, errorMsg],
         }));
     }
+    // ========================================================================================================
 
-    /**
-     * Handles the upload load start event
-     *
-     * @method handleLoadStart
-     * @param {Event} event
-     * @memberof UploadItemComponent
-     */
     handleLoadStart(event) {
         this.setState(() => ({
             uploading: true,
@@ -196,12 +207,6 @@ export default class UploadItemComponent extends Component {
         }));
     }
 
-    /**
-     * Handles the upload abort event
-     *
-     * @method handleUploadAbort
-     * @memberof UploadItemComponent
-     */
     handleUploadAbort() {
         this.setState(() => ({
             uploading: false,
@@ -215,12 +220,6 @@ export default class UploadItemComponent extends Component {
         }));
     }
 
-    /**
-     * Handles the upload error event
-     *
-     * @method handleUploadError
-     * @memberof UploadItemComponent
-     */
     handleUploadError() {
         this.setState((state) => ({
             uploading: false,
@@ -234,12 +233,6 @@ export default class UploadItemComponent extends Component {
         }));
     }
 
-    /**
-     * Handles the upload load event
-     *
-     * @method handleUploadLoad
-     * @memberof UploadItemComponent
-     */
     handleUploadLoad() {
         this.setState(() => ({
             uploading: false,
@@ -253,13 +246,6 @@ export default class UploadItemComponent extends Component {
         }));
     }
 
-    /**
-     * Handles the upload progress event
-     *
-     * @method handleUploadProgress
-     * @param {Event} event
-     * @memberof UploadItemComponent
-     */
     handleUploadProgress(event) {
         const fraction = event.loaded / event.total;
         const progress = parseInt(fraction * 100, 10);
@@ -278,12 +264,6 @@ export default class UploadItemComponent extends Component {
         }));
     }
 
-    /**
-     * Handles the upload end event
-     *
-     * @method handleUploadEnd
-     * @memberof UploadItemComponent
-     */
     handleUploadEnd() {
         this.setState(
             (state) => {
@@ -309,23 +289,11 @@ export default class UploadItemComponent extends Component {
         );
     }
 
-    /**
-     * Aborts file upload
-     *
-     * @method abortUploading
-     * @memberof UploadItemComponent
-     */
     abortUploading() {
         this.state.xhr.abort();
         this.props.onAfterAbort(this.props.data);
     }
 
-    /**
-     * Deletes a file
-     *
-     * @method deleteFile
-     * @memberof UploadItemComponent
-     */
     deleteFile() {
         this.setState(
             () => ({ deleted: true }),
@@ -333,24 +301,10 @@ export default class UploadItemComponent extends Component {
         );
     }
 
-    /**
-     * Handles the file deleted event
-     *
-     * @method handleFileDeleted
-     * @memberof UploadItemComponent
-     */
     handleFileDeleted() {
         this.props.onAfterDelete(this.props.data);
     }
 
-    /**
-     * Returns content type identifier
-     * based on Content object returned from server after upload
-     *
-     * @method getContentTypeIdentifier
-     * @memberof UploadItemComponent
-     * @returns {String|null}
-     */
     getContentTypeIdentifier() {
         const { contentTypesMap, data } = this.props;
 
@@ -365,12 +319,6 @@ export default class UploadItemComponent extends Component {
         return contentTypeIdentifier;
     }
 
-    /**
-     * Renders an icon of a content type
-     *
-     * @method renderIcon
-     * @returns {JSX.Element|null}
-     */
     renderIcon() {
         const contentTypeIdentifier = this.getContentTypeIdentifier();
 
@@ -380,16 +328,9 @@ export default class UploadItemComponent extends Component {
 
         const contentTypeIconUrl = getContentTypeIconUrl(contentTypeIdentifier);
 
-        return <Icon customPath={contentTypeIconUrl} extraClasses="ibexa-icon--small"/>;
+        return <Icon customPath={contentTypeIconUrl} extraClasses="ibexa-icon--small" />;
     }
 
-    /**
-     * Renders a progress bar
-     *
-     * @method renderProgressBar
-     * @memberof UploadItemComponent
-     * @returns {null|Element}
-     */
     renderProgressBar() {
         const { uploaded, aborted, progress, totalSize, uploadedSize, disallowed } = this.state;
 
@@ -400,66 +341,39 @@ export default class UploadItemComponent extends Component {
         return <ProgressBarComponent progress={progress} uploaded={uploadedSize} total={totalSize} />;
     }
 
-    /**
-     * Renders an error message
-     *
-     * @method renderErrorMessage
-     * @memberof UploadItemComponent
-     * @returns {null|Element}
-     */
-    renderErrorMessage() {
+    renderErrorInfo() {
+        const { isError, errorMsgs, uploading } = this.state;
+
+        if (!isError) {
+            return null;
+        }
+
         const Translator = getTranslator();
-        const { uploaded, aborted, disallowedType, disallowedSize, failed, uploading, disallowedContentType } = this.state;
-        const isError = !uploaded && !aborted && (disallowedSize || disallowedType || disallowedContentType) && failed && !uploading;
-        const cannotUploadMessage = Translator.trans(
-            /*@Desc("Cannot upload file")*/ 'cannot_upload.message',
-            {},
-            'ibexa_multi_file_upload',
-        );
-        const disallowedTypeMessage = Translator.trans(
-            /*@Desc("File type is not allowed")*/ 'disallowed_type.message',
-            {},
-            'ibexa_multi_file_upload',
-        );
-        const disallowedSizeMessage = Translator.trans(
-            /*@Desc("File size is not allowed")*/ 'disallowed_size.message',
-            {},
-            'ibexa_multi_file_upload',
-        );
-        const disallowedContentTypeMessage = Translator.trans(
-            /*@Desc("You do not have permission to create this Content item")*/ 'disallowed_content_type.message',
-            {},
-            'ibexa_multi_file_upload',
-        );
-        let msg = cannotUploadMessage;
+        const isMultipleErros = errorMsgs.length > 1;
+        const label = isMultipleErros
+            ? Translator.trans(/*@Desc("Failed to upload ")*/ 'multierror.label', {}, 'ibexa_multi_file_upload')
+            : errorMsgs[0];
 
-        if (disallowedType) {
-            msg = disallowedTypeMessage;
-        }
-
-        if (disallowedSize) {
-            msg = disallowedSizeMessage;
-        }
-
-        if (disallowedContentType) {
-            msg = disallowedContentTypeMessage;
-        }
-
-        return isError ? (
+        return (
             <div className="c-upload-list-item__message c-upload-list-item__message--error">
                 <Icon name="warning" extraClasses="ibexa-icon--tiny-small" />
-                {msg}
+                {label}
+                {isMultipleErros && (
+                    <button
+                        className="c-upload-list-item__multiple-errors-toggle-btn"
+                        onClick={() =>
+                            this.setState((prevState) => ({
+                                isMultipleErrosExpanded: !prevState.isMultipleErrosExpanded,
+                            }))
+                        }
+                    >
+                        <Icon name="caret-down" extraClasses="ibexa-icon--tiny-small" />
+                    </button>
+                )}
             </div>
-        ) : null;
+        );
     }
 
-    /**
-     * Renders an error message
-     *
-     * @method renderErrorMessage
-     * @memberof UploadItemComponent
-     * @returns {null|Element}
-     */
     renderSuccessMessage() {
         const Translator = getTranslator();
         const { uploaded, aborted, disallowedSize, disallowedType, failed, uploading } = this.state;
@@ -474,13 +388,6 @@ export default class UploadItemComponent extends Component {
         ) : null;
     }
 
-    /**
-     * Renders an abort upload button
-     *
-     * @method renderAbortBtn
-     * @memberof UploadItemComponent
-     * @returns {null|Element}
-     */
     renderAbortBtn() {
         const Translator = getTranslator();
         const { uploaded, aborted, disallowedSize, disallowedType, failed, uploading } = this.state;
@@ -504,13 +411,6 @@ export default class UploadItemComponent extends Component {
         );
     }
 
-    /**
-     * Handles the edit button click event. Fills in the hidden form to redirect a user to a correct content edit location.
-     *
-     * @method handleEditBtnClick
-     * @memberof UploadItemComponent
-     * @param {Event} event
-     */
     handleEditBtnClick(event) {
         event.preventDefault();
 
@@ -527,13 +427,6 @@ export default class UploadItemComponent extends Component {
         this.contentEditBtn.click();
     }
 
-    /**
-     * Renders an edit content button
-     *
-     * @method renderEditBtn
-     * @memberof UploadItemComponent
-     * @returns {null|Element}
-     */
     renderEditBtn() {
         const Translator = getTranslator();
         const { instanceUrl } = getRestInfo();
@@ -558,13 +451,6 @@ export default class UploadItemComponent extends Component {
         );
     }
 
-    /**
-     * Renders an delete content button
-     *
-     * @method renderDeleteBtn
-     * @memberof UploadItemComponent
-     * @returns {null|Element}
-     */
     renderDeleteBtn() {
         const { uploaded, aborted, disallowedSize, disallowedType, failed, uploading } = this.state;
         const canDelete = this.props.isUploaded || (uploaded && !aborted && !(disallowedSize || disallowedType) && !failed && !uploading);
@@ -589,12 +475,12 @@ export default class UploadItemComponent extends Component {
     }
 
     render() {
-        const { uploaded, aborted, disallowedType, disallowedSize, failed, uploading, disallowedContentType, deleted, totalSize } =
-            this.state;
-        const isError = !uploaded && !aborted && (disallowedSize || disallowedType || disallowedContentType) && failed && !uploading;
+        const { isError, deleted, totalSize, errorMsgs, isMultipleErrosExpanded } = this.state;
+        const isMultipleErros = errorMsgs.length > 1;
         const wrapperClassName = createCssClassNames({
             'c-upload-list-item': true,
             'c-upload-list-item--errored': isError,
+            'c-upload-list-item--expanded-multiple-errors': isMultipleErrosExpanded,
         });
 
         if (deleted) {
@@ -609,7 +495,7 @@ export default class UploadItemComponent extends Component {
                     <div className="c-upload-list-item__size">{totalSize}</div>
                 </div>
                 <div className="c-upload-list-item__info">
-                    {this.renderErrorMessage()}
+                    {this.renderErrorInfo()}
                     {!isError && this.renderSuccessMessage()}
                     {!isError && this.renderProgressBar()}
                 </div>
@@ -618,6 +504,13 @@ export default class UploadItemComponent extends Component {
                     {!isError && this.renderEditBtn()}
                     {!isError && this.renderDeleteBtn()}
                 </div>
+                {isMultipleErros && (
+                    <ul className="c-upload-list-item__multiple-errors-list">
+                        {errorMsgs.map((errorMsg) => {
+                            return <li className="c-upload-list-item__multiple-errors-item">{errorMsg}</li>;
+                        })}
+                    </ul>
+                )}
             </div>
         );
     }

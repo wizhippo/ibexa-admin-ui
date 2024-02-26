@@ -1,5 +1,4 @@
 import { getTranslator, getRestInfo } from '@ibexa-admin-ui/src/bundle/Resources/public/js/scripts/helpers/context.helper';
-import { showErrorNotification } from '@ibexa-admin-ui/src/bundle/Resources/public/js/scripts/helpers/notification.helper';
 import { getRequestHeaders, getRequestMode } from '../../../../../Resources/public/js/scripts/helpers/request.helper';
 
 const handleOnReadyStateChange = (xhr, onSuccess, onError) => {
@@ -77,7 +76,7 @@ const getFieldDefinitionByIdentifier = (contentTypeId, fieldIdentifier) => {
 
     return fetch(request).then(handleRequestResponse);
 };
-const prepareStruct = ({ parentInfo, config, languageCode }, data) => {
+const prepareStruct = ({ parentInfo, config, languageCode }, data, contentErrorCallback) => {
     const Translator = getTranslator();
     let parentLocation = `/api/ibexa/v2/content/locations${parentInfo.locationPath}`;
 
@@ -87,15 +86,15 @@ const prepareStruct = ({ parentInfo, config, languageCode }, data) => {
 
     return getContentTypeByIdentifier(mapping.contentTypeIdentifier)
         .then((response) => response.json())
-        .catch(() =>
-            showErrorNotification(
+        .catch(() => {
+            contentErrorCallback(
                 Translator.trans(
                     /*@Desc("Cannot get content type by identifier")*/ 'cannot_get_content_type_identifier.message',
                     {},
                     'ibexa_multi_file_upload',
                 ),
-            ),
-        )
+            )
+        })
         .then((response) => {
             const fileValue = {
                 fileName: data.file.name,
@@ -107,15 +106,15 @@ const prepareStruct = ({ parentInfo, config, languageCode }, data) => {
 
             return getFieldDefinitionByIdentifier(contentType.id, contentFieldIdentifier)
                 .then((parsedResponse) => parsedResponse.json())
-                .catch(() =>
-                    showErrorNotification(
+                .catch(() => {
+                    contentErrorCallback(
                         Translator.trans(
                             /*@Desc("Cannot get content type by identifier")*/ 'cannot_get_content_type_identifier.message',
                             {},
                             'ibexa_multi_file_upload',
                         ),
-                    ),
-                )
+                    );
+                })
                 .then((parsedResponse) => {
                     const fieldDefinition = parsedResponse.FieldDefinition;
 
@@ -143,25 +142,25 @@ const prepareStruct = ({ parentInfo, config, languageCode }, data) => {
 
                     return struct;
                 })
-                .catch(() =>
-                    showErrorNotification(
+                .catch(() => {
+                    contentErrorCallback(
                         Translator.trans(
                             /*@Desc("Cannot create content structure")*/ 'cannot_create_content_structure.message',
                             {},
                             'ibexa_multi_file_upload',
                         ),
-                    ),
-                );
+                    );
+                });
         })
-        .catch(() =>
-            showErrorNotification(
+        .catch(() => {
+            contentErrorCallback(
                 Translator.trans(
                     /*@Desc("Cannot create content structure")*/ 'cannot_create_content_structure.message',
                     {},
                     'ibexa_multi_file_upload',
                 ),
-            ),
-        );
+            );
+        });
 };
 const createDraft = (struct, requestEventHandlers) => {
     const { instanceUrl, token, siteaccess, accessToken } = getRestInfo();
@@ -239,34 +238,58 @@ const canCreateContent = (file, parentInfo, config) => {
 };
 
 export const checkCanUpload = (file, parentInfo, config, callbacks) => {
+    const Translator = getTranslator();
     const locationMapping = config.locationMappings.find((item) => item.contentTypeIdentifier === parentInfo.contentTypeIdentifier);
 
     if (!canCreateContent(file, parentInfo, config)) {
-        callbacks.contentTypeNotAllowedCallback();
+        callbacks.contentTypeNotAllowedCallback(
+            Translator.trans(
+                /*@Desc("You do not have permission to create this Content item")*/ 'disallowed_content_type.message',
+                {},
+                'ibexa_multi_file_upload',
+            ),
+        );
 
         return false;
     }
 
     if (!checkFileTypeAllowed(file, locationMapping)) {
-        callbacks.fileTypeNotAllowedCallback();
+        callbacks.fileTypeNotAllowedCallback(
+            Translator.trans(/*@Desc("File type is not allowed")*/ 'disallowed_type.message', {}, 'ibexa_multi_file_upload'),
+        );
 
         return false;
     }
 
     if (file.size > config.maxFileSize) {
-        callbacks.fileSizeNotAllowedCallback();
+        callbacks.fileSizeNotAllowedCallback(
+            Translator.trans(/*@Desc("File size is not allowed")*/ 'disallowed_size.message', {}, 'ibexa_multi_file_upload'),
+        );
 
         return false;
     }
 
     return true;
 };
-export const createFileStruct = (file, params) => new Promise(readFile.bind(new FileReader(), file)).then(prepareStruct.bind(null, params));
-export const publishFile = (data, requestEventHandlers, callback) => {
-    createDraft(data, requestEventHandlers)
+export const createFileStruct = (file, params, contentErrorCallback) => {
+    return new Promise(readFile.bind(new FileReader(), file)).then((fileData) => prepareStruct(params, fileData, contentErrorCallback));
+};
+
+export const publishFile = (data, requestEventHandlers, successCallback, contentErrorCallback) => {
+    createDraft(data, requestEventHandlers, contentErrorCallback)
         .then(publishDraft)
-        .then(callback)
-        .catch(showErrorNotification('An error occurred while publishing a file'));
+        .then(successCallback)
+        .catch(() => {
+            const Translator = getTranslator();
+
+            contentErrorCallback(
+                Translator.trans(
+                    /*@Desc("An error occurred while publishing a file")*/ 'general.error.message',
+                    {},
+                    'ibexa_multi_file_upload',
+                ),
+            );
+        });
 };
 export const deleteFile = (struct, callback) => {
     const { instanceUrl, token, siteaccess, accessToken } = getRestInfo();

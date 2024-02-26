@@ -35,7 +35,7 @@ export default class UploadPopupModule extends Component {
         };
         const Translator = getTranslator();
         const title = Translator.trans(/*@Desc("Multi-file upload")*/ 'upload_popup.close', {}, 'ibexa_multi_file_upload');
-
+console.log(listAttrs)
         return (
             <div className="c-upload-popup" ref={this.refTooltip}>
                 <TooltipPopup title={title} showFooter={false} {...tooltipAttrs}>
