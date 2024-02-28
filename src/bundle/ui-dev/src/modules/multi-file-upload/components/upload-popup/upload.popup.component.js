@@ -15,6 +15,7 @@ export default class UploadPopupModule extends Component {
         super(props);
 
         this.refTooltip = React.createRef();
+        this.getMaxFileSizes = this.getMaxFileSizes.bind(this);
     }
 
     componentDidMount() {
@@ -35,11 +36,12 @@ export default class UploadPopupModule extends Component {
         };
         const Translator = getTranslator();
         const title = Translator.trans(/*@Desc("Multi-file upload")*/ 'upload_popup.close', {}, 'ibexa_multi_file_upload');
-console.log(listAttrs)
+        const label = Translator.trans(/*@Desc("Upload")*/ 'upload_popup.label', {}, 'ibexa_multi_file_upload');
+
         return (
             <div className="c-upload-popup" ref={this.refTooltip}>
                 <TooltipPopup title={title} showFooter={false} {...tooltipAttrs}>
-                    <div className="c-upload-popup__label">Lorem ipsum</div>
+                    <div className="c-upload-popup__label">{label}</div>
                     <DropAreaComponent
                         addItemsToUpload={this.props.addItemsToUpload}
                         maxFileSize={this.props.adminUiConfig.multiFileUpload.maxFileSize}

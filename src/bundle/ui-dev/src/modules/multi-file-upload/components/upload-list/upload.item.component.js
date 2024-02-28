@@ -131,25 +131,14 @@ export default class UploadItemComponent extends Component {
         );
     }
 
-    handleContentError = (errorMsg, callback) => {
+    handleContentError = (errorMsg) => {
         this.setState((prevState) => ({
             isError: true,
             errorMsgs: [...prevState.errorMsgs, errorMsg],
         }));
     };
 
-    // ========================================================================================================
-    // TO DO: maybe put this funcstions to one, diff is
-    // - disallowedType: true,
-    // - disallowedSize: false,
-    // - disallowedContentType: false
-    // commone params
-    // - uploading: false
-    // - disallowed: true
-    // - uploaded: false
-    // - aborted: false
-    // - failed: true
-    handleFileTypeNotAllowed(errorMsg = '') {
+    handleFileTypeNotAllowed(errorMsg) {
         this.setState((prevState) => ({
             uploading: false,
             disallowed: true,
@@ -163,7 +152,8 @@ export default class UploadItemComponent extends Component {
             errorMsgs: [...prevState.errorMsgs, errorMsg],
         }));
     }
-    handleFileSizeNotAllowed(errorMsg = '') {
+
+    handleFileSizeNotAllowed(errorMsg) {
         this.setState((prevState) => ({
             uploading: false,
             disallowed: true,
@@ -177,7 +167,8 @@ export default class UploadItemComponent extends Component {
             errorMsgs: [...prevState.errorMsgs, errorMsg],
         }));
     }
-    handleContentTypeNotAllowed(errorMsg = '') {
+
+    handleContentTypeNotAllowed(errorMsg) {
         this.setState((prevState) => ({
             uploading: false,
             disallowed: true,
@@ -191,7 +182,6 @@ export default class UploadItemComponent extends Component {
             errorMsgs: [...prevState.errorMsgs, errorMsg],
         }));
     }
-    // ========================================================================================================
 
     handleLoadStart(event) {
         this.setState(() => ({
@@ -342,7 +332,7 @@ export default class UploadItemComponent extends Component {
     }
 
     renderErrorInfo() {
-        const { isError, errorMsgs, uploading } = this.state;
+        const { isError, errorMsgs } = this.state;
 
         if (!isError) {
             return null;

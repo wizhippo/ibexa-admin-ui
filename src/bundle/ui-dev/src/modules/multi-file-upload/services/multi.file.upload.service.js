@@ -33,7 +33,9 @@ const readFile = function (file, resolve, reject) {
 };
 const findFileTypeMapping = (mappings, file) => mappings.find((item) => item.mimeTypes.find((type) => type === file.type));
 const isMimeTypeAllowed = (mappings, file) => !!findFileTypeMapping(mappings, file);
+
 const checkFileTypeAllowed = (file, locationMapping) => (!locationMapping ? true : isMimeTypeAllowed(locationMapping.mappings, file));
+
 const detectContentTypeMapping = (file, parentInfo, config) => {
     const locationMapping = config.locationMappings.find((item) => item.contentTypeIdentifier === parentInfo.contentTypeIdentifier);
     const mappings = locationMapping ? locationMapping.mappings : config.defaultMappings;
@@ -93,7 +95,7 @@ const prepareStruct = ({ parentInfo, config, languageCode }, data, contentErrorC
                     {},
                     'ibexa_multi_file_upload',
                 ),
-            )
+            );
         })
         .then((response) => {
             const fileValue = {
@@ -236,10 +238,16 @@ const canCreateContent = (file, parentInfo, config) => {
 
     return config.contentCreatePermissionsConfig[contentTypeConfig.contentTypeIdentifier];
 };
+const getMaxFileSize = (file, parentInfo, config) => {
+    const { maxFileSize: contentMaxFileSize } = detectContentTypeMapping(file, parentInfo, config);
+
+    return contentMaxFileSize ? contentMaxFileSize : config.maxFileSize;
+};
 
 export const checkCanUpload = (file, parentInfo, config, callbacks) => {
     const Translator = getTranslator();
     const locationMapping = config.locationMappings.find((item) => item.contentTypeIdentifier === parentInfo.contentTypeIdentifier);
+    const maxFileSize = getMaxFileSize(file, parentInfo, config);
 
     if (!canCreateContent(file, parentInfo, config)) {
         callbacks.contentTypeNotAllowedCallback(
@@ -252,7 +260,6 @@ export const checkCanUpload = (file, parentInfo, config, callbacks) => {
 
         return false;
     }
-
     if (!checkFileTypeAllowed(file, locationMapping)) {
         callbacks.fileTypeNotAllowedCallback(
             Translator.trans(/*@Desc("File type is not allowed")*/ 'disallowed_type.message', {}, 'ibexa_multi_file_upload'),
@@ -261,7 +268,7 @@ export const checkCanUpload = (file, parentInfo, config, callbacks) => {
         return false;
     }
 
-    if (file.size > config.maxFileSize) {
+    if (file.size > maxFileSize) {
         callbacks.fileSizeNotAllowedCallback(
             Translator.trans(/*@Desc("File size is not allowed")*/ 'disallowed_size.message', {}, 'ibexa_multi_file_upload'),
         );
@@ -274,7 +281,6 @@ export const checkCanUpload = (file, parentInfo, config, callbacks) => {
 export const createFileStruct = (file, params, contentErrorCallback) => {
     return new Promise(readFile.bind(new FileReader(), file)).then((fileData) => prepareStruct(params, fileData, contentErrorCallback));
 };
-
 export const publishFile = (data, requestEventHandlers, successCallback, contentErrorCallback) => {
     createDraft(data, requestEventHandlers, contentErrorCallback)
         .then(publishDraft)

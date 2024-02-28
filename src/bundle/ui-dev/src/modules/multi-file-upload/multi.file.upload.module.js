@@ -272,12 +272,12 @@ export default class MultiFileUploadModule extends Component {
         if (!this.state.popupVisible) {
             return null;
         }
-        
+
         const Translator = getTranslator();
         const subtitle = Translator.trans(
-            /*@Desc("Under %name%")*/ 'multi_file_upload_popup.subtitle', 
-            {name: this.props.parentInfo.name},
-            'ibexa_multi_file_upload'
+            /*@Desc("Under %name%")*/ 'multi_file_upload_popup.subtitle',
+            { name: this.props.parentInfo.name },
+            'ibexa_multi_file_upload',
         );
 
         const attrs = {
@@ -291,15 +291,12 @@ export default class MultiFileUploadModule extends Component {
             processUploadedFiles: this.processUploadedFiles,
             addItemsToUpload: this.addItemsToUpload,
             removeItemsToUpload: this.removeItemsToUpload,
+            contentCreatePermissionsConfig: this.props.contentCreatePermissionsConfig,
         };
-        const portalTarget = this.configRootNodeSelector
-            ? document.querySelector(this.configRootNodeSelector)
-            : document.body;
+        const portalTarget = this.configRootNodeSelector ? document.querySelector(this.configRootNodeSelector) : document.body;
 
         return createPortal(<UploadPopupComponent {...attrs} />, portalTarget);
     }
-
-    rootNodeSelector;
 
     render() {
         return (
@@ -345,7 +342,7 @@ MultiFileUploadModule.propTypes = {
 
 MultiFileUploadModule.defaultProps = {
     parentInfo: PropTypes.shape({
-        name: ''
+        name: '',
     }),
     checkCanUpload,
     createFileStruct,
