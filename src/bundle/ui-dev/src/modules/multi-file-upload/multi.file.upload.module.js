@@ -32,6 +32,7 @@ export default class MultiFileUploadModule extends Component {
         this.handleAfterUpload = this.handleAfterUpload.bind(this);
         this.showUploadPopup = this.showUploadPopup.bind(this);
         this.hidePopup = this.hidePopup.bind(this);
+        this.confirmPopup = this.confirmPopup.bind(this);
         this.processUploadedFiles = this.processUploadedFiles.bind(this);
         this.setUdwStateOpened = this.setUdwStateOpened.bind(this);
         this.setUdwStateClosed = this.setUdwStateClosed.bind(this);
@@ -108,6 +109,10 @@ export default class MultiFileUploadModule extends Component {
         this.setState((state) => ({ ...state, popupVisible: false }));
 
         this.props.onPopupClose(this._itemsUploaded);
+    }
+
+    confirmPopup() {
+        this.setState((state) => ({ ...state, popupVisible: false }));
     }
 
     /**
@@ -285,6 +290,7 @@ export default class MultiFileUploadModule extends Component {
             subtitle: this.props.parentInfo.name ? subtitle : '',
             visible: true,
             onClose: this.hidePopup,
+            onConfirm: this.confirmPopup,
             itemsToUpload: this.state.itemsToUpload,
             onAfterUpload: this.handleAfterUpload,
             preventDefaultAction: this.preventDefaultAction,
@@ -292,6 +298,12 @@ export default class MultiFileUploadModule extends Component {
             addItemsToUpload: this.addItemsToUpload,
             removeItemsToUpload: this.removeItemsToUpload,
             contentCreatePermissionsConfig: this.props.contentCreatePermissionsConfig,
+            confirmBtnAttrs: {
+                disabled: !!this.state.itemsToUpload.length,
+            },
+            closeBtnAttrs: {
+                disabled: this.state.itemsToUpload.length === 0,
+            },
         };
         const portalTarget = this.configRootNodeSelector ? document.querySelector(this.configRootNodeSelector) : document.body;
 
@@ -331,6 +343,7 @@ MultiFileUploadModule.propTypes = {
     createFileStruct: PropTypes.func,
     deleteFile: PropTypes.func,
     onPopupClose: PropTypes.func,
+    onPopupConfirm: PropTypes.func,
     publishFile: PropTypes.func,
     itemsToUpload: PropTypes.array,
     withUploadButton: PropTypes.bool,
@@ -348,6 +361,7 @@ MultiFileUploadModule.defaultProps = {
     createFileStruct,
     deleteFile,
     onPopupClose: () => {},
+    onPopupConfirm: () => {},
     publishFile,
     itemsToUpload: [],
     withUploadButton: true,

@@ -62,8 +62,8 @@
         <note>key: general.error.message</note>
       </trans-unit>
       <trans-unit id="0cd9663c2a0626f9d1556efe30c151196af02e8e" resname="max_file_size.message">
-        <source>Max file size:</source>
-        <target state="new">Max file size:</target>
+        <source>%contentTypeName% max file size: %maxFileSize%</source>
+        <target state="new">%contentTypeName% max file size: %maxFileSize%</target>
         <note>key: max_file_size.message</note>
       </trans-unit>
       <trans-unit id="412c9936722fbbcd34664fdbfe33880fad7ef998" resname="multi_file_upload_open_btn.label">
@@ -96,10 +96,25 @@
         <target state="new">Upload file</target>
         <note>key: upload_btn.label</note>
       </trans-unit>
-      <trans-unit id="6b2bc429ffc374b49b5de9e3563d3d5a7668e4b2" resname="upload_popup.close">
+      <trans-unit id="36999e5e928304452a57984fe9fb29daef497121" resname="upload_popup.close_label">
+        <source>Confirm and close</source>
+        <target state="new">Confirm and close</target>
+        <note>key: upload_popup.close_label</note>
+      </trans-unit>
+      <trans-unit id="69ca9f45ba70d7b75027057e8b1f23057801a70e" resname="upload_popup.confirm_label">
+        <source>Cancel pending upload</source>
+        <target state="new">Cancel pending upload</target>
+        <note>key: upload_popup.confirm_label</note>
+      </trans-unit>
+      <trans-unit id="8964e0ca9f836009ee40abf9e9b013b41b2dd2d4" resname="upload_popup.label">
+        <source>Upload</source>
+        <target state="new">Upload</target>
+        <note>key: upload_popup.label</note>
+      </trans-unit>
+      <trans-unit id="f0af4c073e35f18370b9eb10fe995a6f5de9ac9d" resname="upload_popup.title">
         <source>Multi-file upload</source>
         <target state="new">Multi-file upload</target>
-        <note>key: upload_popup.close</note>
+        <note>key: upload_popup.title</note>
       </trans-unit>
     </body>
   </file>

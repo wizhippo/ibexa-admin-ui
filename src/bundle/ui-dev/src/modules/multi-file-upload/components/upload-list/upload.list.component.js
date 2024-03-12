@@ -121,15 +121,12 @@ export default class UploadListComponent extends Component {
 
         return <UploadItemComponent {...attrs} />;
     }
-    
-   
 
     render() {
         const { itemsToUpload } = this.props;
         const { items } = this.state;
         const uploadListClassName = createCssClassNames({
             'c-upload-list': true,
-            'c-upload-list--visible': items.length,
         });
 
         return (

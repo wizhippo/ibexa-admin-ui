@@ -1,8 +1,5 @@
 .c-upload-list {
-    
-    &__items {
-        &:not(:empty) {
-            margin-top: calculateRem(32px);
-        }
-    }
+    height: 100%;
+    overflow: auto;
+    margin-top: calculateRem(16px);
 }

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import { getTranslator } from '@ibexa-admin-ui/src/bundle/Resources/public/js/scripts/helpers/context.helper';
 import { parse as parseTooltips } from '@ibexa-admin-ui/src/bundle/Resources/public/js/scripts/helpers/tooltips.helper';
+import { getContentTypeName } from '@ibexa-admin-ui/src/bundle/Resources/public/js/scripts/helpers/content.type.helper';
 
 import TooltipPopup from '../../../common/tooltip-popup/tooltip.popup.component';
 import DropAreaComponent from '../drop-area/drop.area.component';
@@ -15,7 +16,6 @@ export default class UploadPopupModule extends Component {
         super(props);
 
         this.refTooltip = React.createRef();
-        this.getMaxFileSizes = this.getMaxFileSizes.bind(this);
     }
 
     componentDidMount() {
@@ -27,24 +27,46 @@ export default class UploadPopupModule extends Component {
         window.document.body.classList.remove(CLASS_SCROLL_DISABLED);
     }
 
+    getContentTypesMaxFileSize() {
+        const { locationMappings, defaultMappings, maxFileSize: defaultMaxFileSize } = this.props.adminUiConfig.multiFileUpload;
+        const mappings = locationMappings.length ? locationMappings : defaultMappings;
+        const contentTypeIdentifiers = Object.keys(this.props.contentCreatePermissionsConfig);
+
+        return contentTypeIdentifiers.reduce((maxFileSizes, contentTypeIdentifier) => {
+            const contentTypeName = getContentTypeName(contentTypeIdentifier);
+            const contentTypeMapping = mappings.find((item) => item.contentTypeIdentifier === contentTypeIdentifier);
+
+            maxFileSizes.push({
+                name: contentTypeName,
+                maxFileSize: contentTypeMapping.maxFileSize || defaultMaxFileSize,
+            });
+
+            return maxFileSizes;
+        }, []);
+    }
+
     render() {
-        const tooltipAttrs = this.props;
+        const Translator = getTranslator();
+        const label = Translator.trans(/*@Desc("Upload")*/ 'upload_popup.label', {}, 'ibexa_multi_file_upload');
+        const tooltipAttrs = {
+            ...this.props,
+            title: Translator.trans(/*@Desc("Multi-file upload")*/ 'upload_popup.title', {}, 'ibexa_multi_file_upload'),
+            confirmLabel: Translator.trans(/*@Desc("Confirm and close")*/ 'upload_popup.close_label', {}, 'ibexa_multi_file_upload'),
+            closeLabel: Translator.trans(/*@Desc("Cancel pending upload")*/ 'upload_popup.confirm_label', {}, 'ibexa_multi_file_upload'),
+        };
         const listAttrs = {
             ...tooltipAttrs,
             itemsToUpload: this.props.itemsToUpload,
             removeItemsToUpload: this.props.removeItemsToUpload,
         };
-        const Translator = getTranslator();
-        const title = Translator.trans(/*@Desc("Multi-file upload")*/ 'upload_popup.close', {}, 'ibexa_multi_file_upload');
-        const label = Translator.trans(/*@Desc("Upload")*/ 'upload_popup.label', {}, 'ibexa_multi_file_upload');
 
         return (
             <div className="c-upload-popup" ref={this.refTooltip}>
-                <TooltipPopup title={title} showFooter={false} {...tooltipAttrs}>
+                <TooltipPopup {...tooltipAttrs}>
                     <div className="c-upload-popup__label">{label}</div>
                     <DropAreaComponent
                         addItemsToUpload={this.props.addItemsToUpload}
-                        maxFileSize={this.props.adminUiConfig.multiFileUpload.maxFileSize}
+                        maxFileSizes={this.getContentTypesMaxFileSize()}
                         preventDefaultAction={this.props.preventDefaultAction}
                         processUploadedFiles={this.props.processUploadedFiles}
                     />
