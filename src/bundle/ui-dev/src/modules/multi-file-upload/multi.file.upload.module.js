@@ -2,14 +2,12 @@ import React, { Component } from 'react';
 import { createPortal } from 'react-dom';
 import PropTypes from 'prop-types';
 
-import { getTranslator, getRootNodeSelector } from '@ibexa-admin-ui/src/bundle/Resources/public/js/scripts/helpers/context.helper';
+import { getTranslator, getRootNode } from '@ibexa-admin-ui/src/bundle/Resources/public/js/scripts/helpers/context.helper';
 
 import UploadPopupComponent from './components/upload-popup/upload.popup.component';
 import { createFileStruct, publishFile, deleteFile, checkCanUpload } from './services/multi.file.upload.service';
 import Icon from '../common/icon/icon';
 import { createCssClassNames } from '../common/helpers/css.class.names';
-
-const { document } = window;
 
 export const MODULES_CAN_TRIGGER_MFU_LIST = {
     udw: 'UniversalDiscoveryModule',
@@ -21,7 +19,7 @@ export default class MultiFileUploadModule extends Component {
 
         let popupVisible = true;
 
-        this.configRootNodeSelector = getRootNodeSelector();
+        this.configRootNode = getRootNode();
         this._itemsUploaded = [];
 
         if (!props.itemsToUpload || !props.itemsToUpload.length) {
@@ -51,8 +49,8 @@ export default class MultiFileUploadModule extends Component {
     componentDidMount() {
         this.manageDropEvent();
 
-        document.body.addEventListener('ibexa-udw-opened', this.setUdwStateOpened, false);
-        document.body.addEventListener('ibexa-udw-closed', this.setUdwStateClosed, false);
+        this.configRootNode.addEventListener('ibexa-udw-opened', this.setUdwStateOpened, false);
+        this.configRootNode.addEventListener('ibexa-udw-closed', this.setUdwStateClosed, false);
     }
 
     componentDidUpdate() {
@@ -60,8 +58,8 @@ export default class MultiFileUploadModule extends Component {
     }
 
     componentWillUnmount() {
-        document.body.removeEventListener('ibexa-udw-opened', this.setUdwStateOpened, false);
-        document.body.removeEventListener('ibexa-udw-closed', this.setUdwStateClosed, false);
+        this.configRootNode.removeEventListener('ibexa-udw-opened', this.setUdwStateOpened, false);
+        this.configRootNode.removeEventListener('ibexa-udw-closed', this.setUdwStateClosed, false);
     }
 
     /**
@@ -94,8 +92,8 @@ export default class MultiFileUploadModule extends Component {
         const { uploadDisabled, popupVisible, itemsToUpload } = this.state;
 
         if (!uploadDisabled && !popupVisible && !itemsToUpload.length) {
-            window.addEventListener('drop', this.handleDropOnWindow, false);
-            window.addEventListener('dragover', this.preventDefaultAction, false);
+            this.configRootNode.addEventListener('drop', this.handleDropOnWindow, false);
+            this.configRootNode.addEventListener('dragover', this.preventDefaultAction, false);
         }
     }
 
@@ -106,13 +104,15 @@ export default class MultiFileUploadModule extends Component {
      * @memberof MultiFileUploadModule
      */
     hidePopup() {
-        this.setState((state) => ({ ...state, popupVisible: false }));
+        this.setState((state) => ({ ...state, popupVisible: false, allowDropOnWindow: true }));
 
         this.props.onPopupClose(this._itemsUploaded);
     }
 
     confirmPopup() {
-        this.setState((state) => ({ ...state, popupVisible: false }));
+        this.setState((state) => ({ ...state, popupVisible: false, allowDropOnWindow: true }));
+
+        this.props.onPopupConfirm(this._itemsUploaded);
     }
 
     /**
@@ -156,8 +156,8 @@ export default class MultiFileUploadModule extends Component {
             return;
         }
 
-        window.removeEventListener('drop', this.handleDropOnWindow, false);
-        window.removeEventListener('dragover', this.preventDefaultAction, false);
+        this.configRootNode.removeEventListener('drop', this.handleDropOnWindow, false);
+        this.configRootNode.removeEventListener('dragover', this.preventDefaultAction, false);
 
         this.setState((state) => ({ ...state, itemsToUpload, popupVisible: true, allowDropOnWindow: false }));
     }
@@ -305,9 +305,8 @@ export default class MultiFileUploadModule extends Component {
                 disabled: this.state.itemsToUpload.length === 0,
             },
         };
-        const portalTarget = this.configRootNodeSelector ? document.querySelector(this.configRootNodeSelector) : document.body;
 
-        return createPortal(<UploadPopupComponent {...attrs} />, portalTarget);
+        return createPortal(<UploadPopupComponent {...attrs} />, this.configRootNode);
     }
 
     render() {

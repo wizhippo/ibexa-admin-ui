@@ -1,9 +1,5 @@
 (function (global, doc, iconPaths) {
-    const configRootNodeSelector = getRootNodeSelector();
-    const noticeRootNode = configRootNodeSelector 
-        ? doc.querySelector(configRootNodeSelector)
-        : doc.body
-    const notificationsContainer = noticeRootNode.querySelector('.ibexa-notifications-container');
+    const notificationsContainer = doc.querySelector('.ibexa-notifications-container');
     const notifications = JSON.parse(notificationsContainer.dataset.notifications);
     const { template } = notificationsContainer.dataset;
     const iconsMap = {
@@ -20,7 +16,6 @@
         return stringTempNode.innerHTML;
     };
     const addNotification = ({ detail }) => {
-        console.log('add n')
         const { label, message } = detail;
         const container = doc.createElement('div');
         const iconSetPath = iconPaths.iconSets[iconPaths.defaultIconSet];
@@ -43,5 +38,5 @@
         messages.forEach((message) => addNotification({ detail: { label, message } }));
     });
 
-    noticeRootNode.addEventListener('ibexa-notify', addNotification, false);
+    doc.body.addEventListener('ibexa-notify', addNotification, false);
 })(window, window.document, window.ibexa.iconPaths);

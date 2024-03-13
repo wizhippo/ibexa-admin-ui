@@ -65,7 +65,6 @@ const iconsMap = {
     view: View,
     'view-grid': ViewGrid,
     'view-list': ViewList,
-    'missing-icon': AboutInfo,
     user: User,
     user_group: UserGroup,
     upload: Upload,
@@ -73,8 +72,8 @@ const iconsMap = {
 };
 
 const InculdedIcon = (props) => {
-    const { name, cssClass } = props;
-    const IconComponent = iconsMap[name] ?? iconsMap['missing-icon'];
+    const { name, cssClass, defaultIconName } = props;
+    const IconComponent = iconsMap[name] ?? iconsMap[defaultIconName];
 
     return <IconComponent className={cssClass} />;
 };
@@ -82,11 +81,13 @@ const InculdedIcon = (props) => {
 InculdedIcon.propTypes = {
     cssClass: PropTypes.string,
     name: PropTypes.string,
+    defaultIconName: PropTypes.string,
 };
 
 InculdedIcon.defaultProps = {
     cssClass: '',
-    name: 'missing-icon',
+    name: 'about-info',
+    defaultIconName: 'about-info',
 };
 
 export default InculdedIcon;

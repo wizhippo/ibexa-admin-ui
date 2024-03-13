@@ -77,6 +77,7 @@
          * @param {Event} event
          */
         handleDropFile(event) {
+            console.log('drop file')
             const [file] = event.dataTransfer.files;
 
             if (!this.checkCanDrop(file)) {

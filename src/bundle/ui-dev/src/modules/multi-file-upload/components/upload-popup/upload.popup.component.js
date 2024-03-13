@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { getTranslator } from '@ibexa-admin-ui/src/bundle/Resources/public/js/scripts/helpers/context.helper';
+import { getTranslator, getRootNode } from '@ibexa-admin-ui/src/bundle/Resources/public/js/scripts/helpers/context.helper';
 import { parse as parseTooltips } from '@ibexa-admin-ui/src/bundle/Resources/public/js/scripts/helpers/tooltips.helper';
 import { getContentTypeName } from '@ibexa-admin-ui/src/bundle/Resources/public/js/scripts/helpers/content.type.helper';
 
@@ -16,10 +16,11 @@ export default class UploadPopupModule extends Component {
         super(props);
 
         this.refTooltip = React.createRef();
+        this.rootNode = getRootNode();
     }
 
     componentDidMount() {
-        window.document.body.classList.add(CLASS_SCROLL_DISABLED);
+        this.rootNode.classList.add(CLASS_SCROLL_DISABLED);
         parseTooltips(this.refTooltip.current);
     }
 

@@ -66,6 +66,11 @@
         <target state="new">%contentTypeName% max file size: %maxFileSize%</target>
         <note>key: max_file_size.message</note>
       </trans-unit>
+      <trans-unit id="429208648b00f65a5e36fab1ea37a9fa446ddc78" resname="max_file_size.message.general">
+        <source>Max. file size</source>
+        <target state="new">Max. file size</target>
+        <note>key: max_file_size.message.general</note>
+      </trans-unit>
       <trans-unit id="412c9936722fbbcd34664fdbfe33880fad7ef998" resname="multi_file_upload_open_btn.label">
         <source>Upload</source>
         <target state="new">Upload</target>

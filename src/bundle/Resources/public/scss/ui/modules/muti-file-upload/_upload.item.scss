@@ -2,9 +2,9 @@
     display: flex;
     flex-wrap: wrap;
     background: $ibexa-color-white;
-    padding: calculateRem(8px) 0;
-    margin: calculateRem(8px) 0;
-    min-height: calculateRem(60px);
+    padding: 0;
+    margin: calculateRem(12px) 0;
+    height: calculateRem(48px);
 
     &--errored {
         background: $ibexa-color-danger-200;
@@ -22,6 +22,7 @@
 
     &--expanded-multiple-errors {
         padding-bottom: 0;
+        height: auto;
 
         .c-upload-list-item {
             &__multiple-errors-list {
@@ -46,6 +47,7 @@
     &__meta {
         padding: 0 calculateRem(8px);
         max-width: 25vw;
+        height: calculateRem(48px);
         display: flex;
         justify-content: center;
         align-items: center;
@@ -60,7 +62,6 @@
     }
 
     &__size {
-        padding-top: calculateRem(6px);
         color: $ibexa-color-dark-400;
         font-size: $ibexa-text-font-size-small;
     }

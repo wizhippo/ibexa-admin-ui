@@ -311,14 +311,23 @@ export default class UploadItemComponent extends Component {
 
     renderIcon() {
         const contentTypeIdentifier = this.getContentTypeIdentifier();
-
+        
         if (!contentTypeIdentifier) {
             return null;
         }
 
+        const { instanceUrl } = getRestInfo();
         const contentTypeIconUrl = getContentTypeIconUrl(contentTypeIdentifier);
+        const [, iconName] = contentTypeIconUrl.split('#');
 
-        return <Icon customPath={contentTypeIconUrl} extraClasses="ibexa-icon--small" />;
+        return  (
+            <>
+                {window.origin !== instanceUrl
+                    ? <Icon name={iconName} extraClasses="ibexa-icon--small" defaultIconName="file"/>
+                    : <Icon customPath={contentTypeIconUrl} extraClasses="ibexa-icon--small" />
+                }
+            </>
+        )
     }
 
     renderProgressBar() {
@@ -496,9 +505,7 @@ export default class UploadItemComponent extends Component {
                 </div>
                 {isMultipleErros && (
                     <ul className="c-upload-list-item__multiple-errors-list">
-                        {errorMsgs.map((errorMsg) => {
-                            return <li className="c-upload-list-item__multiple-errors-item">{errorMsg}</li>;
-                        })}
+                        {errorMsgs.map((errorMsg, index) => <li key={index} className="c-upload-list-item__multiple-errors-item">{errorMsg}</li>)}
                     </ul>
                 )}
             </div>

@@ -146,6 +146,7 @@
         }
 
         onDrop() {
+            console.log('Drop aaaa')
             this.itemsContainer.insertBefore(this.draggedItem, this.itemsContainer.querySelector(this.selectorPlaceholder));
             this.removePlaceholder();
             this.triggerHighlight(this.draggedItem);
