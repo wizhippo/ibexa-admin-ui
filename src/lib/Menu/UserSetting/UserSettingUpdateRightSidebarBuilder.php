@@ -90,9 +90,7 @@ class UserSettingUpdateRightSidebarBuilder extends AbstractBuilder implements Tr
             self::ITEM__SAVE => $saveItem,
             self::ITEM__CANCEL => $this->createMenuItem(
                 self::ITEM__CANCEL,
-                [
-                    'uri' => $return_url,
-                ]
+                $options['return_url'] ? [ 'uri' => $return_url ] : [ 'route' => $return_url]
             ),
         ]);
 
