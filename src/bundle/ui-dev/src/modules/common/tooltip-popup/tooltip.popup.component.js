@@ -1,10 +1,6 @@
 import React, { useLayoutEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import Icon from '../icon/icon';
 import { getTranslator } from '@ibexa-admin-ui/src/bundle/Resources/public/js/scripts/helpers/context.helper';
-
-const INITIAL_HEIGHT = 'initial';
-const HEADER_HEIGHT = 35;
 
 const TooltipPopupComponent = (props) => {
     const contentRef = useRef();
@@ -36,7 +32,7 @@ const TooltipPopupComponent = (props) => {
                     )}
                     {props.onClose && (
                         <button
-                            className="btn ibexa-btn ibexa-btn--secondary"
+                            className="btn ibexa-btn ibexa-btn--tertiary"
                             type="button"
                             onClick={props.onClose}
                             {...props.closeBtnAttrs}
@@ -64,6 +60,8 @@ TooltipPopupComponent.propTypes = {
 
 TooltipPopupComponent.defaultProps = {
     subtitle: '',
+    onClose: () => {},
+    onConfirm: () => {},
     showFooter: true,
     confirmLabel: () => {
         const Translator = getTranslator();

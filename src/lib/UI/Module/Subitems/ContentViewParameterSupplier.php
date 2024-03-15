@@ -244,7 +244,6 @@ class ContentViewParameterSupplier
      * @throws \Ibexa\Contracts\Core\Repository\Exceptions\InvalidArgumentException
      * @throws \Ibexa\Contracts\Core\Repository\Exceptions\NotFoundException
      */
-
     private function getContentCreatePermissionsForMFU(Location $location, Content $content): array
     {
         $createPermissionsInMfu = [];

@@ -298,12 +298,6 @@ export default class MultiFileUploadModule extends Component {
             addItemsToUpload: this.addItemsToUpload,
             removeItemsToUpload: this.removeItemsToUpload,
             contentCreatePermissionsConfig: this.props.contentCreatePermissionsConfig,
-            confirmBtnAttrs: {
-                disabled: !!this.state.itemsToUpload.length,
-            },
-            closeBtnAttrs: {
-                disabled: this.state.itemsToUpload.length === 0,
-            },
         };
 
         return createPortal(<UploadPopupComponent {...attrs} />, this.configRootNode);

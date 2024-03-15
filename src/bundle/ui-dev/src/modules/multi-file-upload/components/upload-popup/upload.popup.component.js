@@ -54,6 +54,12 @@ export default class UploadPopupModule extends Component {
             title: Translator.trans(/*@Desc("Multi-file upload")*/ 'upload_popup.title', {}, 'ibexa_multi_file_upload'),
             confirmLabel: Translator.trans(/*@Desc("Confirm and close")*/ 'upload_popup.close_label', {}, 'ibexa_multi_file_upload'),
             closeLabel: Translator.trans(/*@Desc("Cancel pending upload")*/ 'upload_popup.confirm_label', {}, 'ibexa_multi_file_upload'),
+            confirmBtnAttrs: {
+                disabled: this.props.itemsToUpload.length,
+            },
+            closeBtnAttrs: {
+                disabled: !this.props.itemsToUpload.length,
+            },
         };
         const listAttrs = {
             ...tooltipAttrs,
